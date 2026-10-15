@@ -1,16 +1,24 @@
-import { Injectable, signal } from '@angular/core';
-import { environment, isFirebaseConfigured } from '../../environments/environment';
-import { errorCode, errorText, firebaseApp } from './firebase';
+import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
+import { FirebaseClient, errorCode, errorText } from './firebase';
 
 const SESSION_KEY = 'lb-admin';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly firebase = inject(FirebaseClient);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+
   readonly user = signal<string | null>(null);
   readonly ready = signal(false);
-  readonly mode = signal<'local' | 'firebase'>(isFirebaseConfigured() ? 'firebase' : 'local');
+  readonly mode = signal<'local' | 'firebase'>(this.firebase.enabled ? 'firebase' : 'local');
 
   constructor() {
+    if (!this.browser) {
+      this.ready.set(true);
+      return;
+    }
     if (this.mode() === 'local') {
       this.user.set(sessionStorage.getItem(SESSION_KEY) === '1' ? 'session locale' : null);
       this.ready.set(true);
@@ -30,7 +38,7 @@ export class AuthService {
     }
 
     try {
-      const app = await firebaseApp();
+      const app = await this.firebase.app();
       if (!app) throw new Error('Firebase n’est pas configuré.');
       const { getAuth, signInWithEmailAndPassword } = await import('firebase/auth');
       await signInWithEmailAndPassword(getAuth(app), email.trim(), password);
@@ -57,7 +65,7 @@ export class AuthService {
       this.user.set(null);
       return;
     }
-    const app = await firebaseApp();
+    const app = await this.firebase.app();
     if (!app) return;
     const { getAuth, signOut } = await import('firebase/auth');
     await signOut(getAuth(app));
@@ -65,7 +73,7 @@ export class AuthService {
 
   private async listen(): Promise<void> {
     try {
-      const app = await firebaseApp();
+      const app = await this.firebase.app();
       if (!app) {
         this.ready.set(true);
         return;

@@ -4,9 +4,15 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && node scripts/postbuild.mjs",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "node scripts/run-ng-test.mjs --watch=false",
+    "sync": "node scripts/sync-livres.mjs",
+    "test:watch": "node scripts/run-ng-test.mjs",
+    "test:rules": "npx --yes firebase-tools@15.32.1 emulators:exec --only firestore --project demo-laurent-bury \"node --test tests/firestore.rules.test.mjs\"",
+    "test:build": "node --test tests/build.test.mjs tests/sync-livres.test.mjs",
+    "test:all": "npm test && npm run build && npm run test:build && npm run test:rules",
+    "vercel-build": "npm test && npm run sync && npm run build && npm run test:build"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -16,7 +22,12 @@
     "@angular/core": "^21.2.0",
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
+    "@angular/platform-server": "~21.2.0",
     "@angular/router": "^21.2.0",
+    "@angular/ssr": "~21.2.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource-variable/outfit": "^5.3.0",
     "firebase": "^12.19.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
@@ -25,7 +36,10 @@
     "@angular/build": "^21.2.7",
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.0",
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "jsdom": "^27.4.0",
     "prettier": "^3.8.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vitest": "^4.1.11"
   }
 }

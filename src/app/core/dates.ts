@@ -46,9 +46,11 @@ export function lastName(value: string): string {
   return parts.length ? parts[parts.length - 1].toLowerCase() : '';
 }
 
+/** Nom de famille du premier auteur : « Nick SRNICEK et Alex WILLIAMS » se classe à Srnicek. */
 export function surnameKey(value: string): string {
-  const withoutNotes = value.replace(/\([^)]*\)/g, ' ').replace(/[,.]/g, ' ');
-  return lastName(withoutNotes);
+  const withoutNotes = value.replace(/\([^)]*\)/g, ' ');
+  const first = withoutNotes.split(/,|\s+(?:et|and|&)\s+/i).find((part) => part.trim()) ?? '';
+  return lastName(first.replace(/\./g, ' '));
 }
 
 export function surnameInitial(value: string): string {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Meta } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -20,11 +20,12 @@ export class App {
 
   constructor() {
     inject(LivresService);
-    window.addEventListener(
-      'scroll',
-      () => this.showTop.set(window.scrollY > 480),
-      { passive: true },
-    );
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const onScroll = () => this.showTop.set(window.scrollY > 480);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      destroyRef.onDestroy(() => window.removeEventListener('scroll', onScroll));
+    });
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -33,10 +34,10 @@ export class App {
       .subscribe((event) => {
         this.menuOpen.set(false);
         this.showTop.set(false);
-        const admin = event.urlAfterRedirects.startsWith('/admin');
-        this.meta.updateTag({ name: 'robots', content: admin ? 'noindex' : 'index, follow' });
         let route = this.router.routerState.root;
         while (route.firstChild) route = route.firstChild;
+        const hidden = event.urlAfterRedirects.startsWith('/admin') || route.snapshot.data['noindex'] === true;
+        this.meta.updateTag({ name: 'robots', content: hidden ? 'noindex' : 'index, follow' });
         const description = route.snapshot.data['description'];
         if (typeof description === 'string') {
           this.meta.updateTag({ name: 'description', content: description });

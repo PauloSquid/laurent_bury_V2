@@ -1,10 +1,5 @@
 import { Routes } from '@angular/router';
-import { AdminPage } from './pages/admin/admin';
-import { CataloguePage } from './pages/catalogue/catalogue';
-import { CvPage } from './pages/cv/cv';
 import { HomePage } from './pages/home/home';
-import { ParutionsPage } from './pages/parutions/parutions';
-import { PressePage } from './pages/presse/presse';
 
 export const routes: Routes = [
   {
@@ -18,7 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'traduction',
-    component: CataloguePage,
+    loadComponent: () => import('./pages/catalogue/catalogue').then((m) => m.CataloguePage),
     title: 'Traductions | Laurent Bury',
     data: {
       description:
@@ -27,7 +22,7 @@ export const routes: Routes = [
   },
   {
     path: 'dernieres-parutions',
-    component: ParutionsPage,
+    loadComponent: () => import('./pages/parutions/parutions').then((m) => m.ParutionsPage),
     title: 'Dernières parutions | Laurent Bury',
     data: {
       description: 'Les derniers titres traduits par Laurent Bury, parus ou à paraître.',
@@ -35,7 +30,7 @@ export const routes: Routes = [
   },
   {
     path: 'travaux-presse',
-    component: PressePage,
+    loadComponent: () => import('./pages/presse/presse').then((m) => m.PressePage),
     title: 'Travaux pour la presse | Laurent Bury',
     data: {
       description:
@@ -44,17 +39,34 @@ export const routes: Routes = [
   },
   {
     path: 'cv-contact',
-    component: CvPage,
+    loadComponent: () => import('./pages/cv/cv').then((m) => m.CvPage),
     title: 'CV / Contact | Laurent Bury',
     data: {
       description: 'Parcours, publications et moyens de contacter Laurent Bury, traducteur.',
     },
   },
   {
+    path: 'mentions-legales',
+    loadComponent: () => import('./pages/legal/mentions').then((m) => m.MentionsPage),
+    title: 'Mentions légales | Laurent Bury',
+    data: { description: 'Éditeur, hébergeur et propriété intellectuelle du site de Laurent Bury.' },
+  },
+  {
+    path: 'confidentialite',
+    loadComponent: () => import('./pages/legal/confidentialite').then((m) => m.ConfidentialitePage),
+    title: 'Politique de confidentialité | Laurent Bury',
+    data: { description: 'Données personnelles, cookies et droits des visiteurs du site de Laurent Bury.' },
+  },
+  {
     path: 'admin',
-    component: AdminPage,
+    loadComponent: () => import('./pages/admin/admin').then((m) => m.AdminPage),
     title: 'Administration | Laurent Bury',
     data: { description: 'Gestion de la liste des traductions.' },
   },
-  { path: '**', redirectTo: '' },
+  {
+    path: '**',
+    loadComponent: () => import('./pages/not-found/not-found').then((m) => m.NotFoundPage),
+    title: 'Page introuvable | Laurent Bury',
+    data: { description: 'Cette page n’existe pas ou a été déplacée.', noindex: true },
+  },
 ];

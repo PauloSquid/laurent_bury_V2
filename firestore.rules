@@ -1,9 +1,35 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Seul compte autorisé à écrire (UID visible dans Authentication → Utilisateurs).
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == '2Tgg2LBO17NYM0me9THUriNIktm1';
+    }
+
+    function isText(data, field, maxSize) {
+      return data[field] is string && data[field].size() <= maxSize;
+    }
+
+    function isValidLivre(data) {
+      let fields = ['auteur', 'titre', 'date', 'editeur', 'genre', 'info_supplementaires', 'image_url'];
+      return data.keys().hasAll(fields)
+        && data.keys().hasOnly(fields)
+        && isText(data, 'titre', 300)
+        && data.titre.trim().size() > 0
+        && isText(data, 'auteur', 200)
+        && isText(data, 'date', 50)
+        && isText(data, 'editeur', 200)
+        && isText(data, 'genre', 100)
+        && isText(data, 'info_supplementaires', 1000)
+        && isText(data, 'image_url', 2048)
+        && (data.image_url == '' || data.image_url.matches('^https?://.+'));
+    }
+
     match /livres/{livreId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update: if isAdmin() && livreId.size() <= 64 && isValidLivre(request.resource.data);
+      allow delete: if isAdmin();
     }
   }
 }

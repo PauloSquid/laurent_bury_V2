@@ -1,0 +1,108 @@
+<header class="page-head wrap">
+  <div>
+    <p class="kicker">Informations légales</p>
+    <h1>Confidentialité</h1>
+  </div>
+  <p class="lede">
+    Ce que le site sait de ses visiteurs, c’est-à-dire presque rien, et les droits que vous donne le Règlement
+    général sur la protection des données (RGPD).
+  </p>
+</header>
+
+<div class="wrap prose legal">
+  <section class="press-block">
+    <h2>En bref</h2>
+    <ul>
+      <li>Aucun compte visiteur, aucun formulaire, aucune newsletter.</li>
+      <li>Aucune mesure d’audience, aucune publicité, aucun cookie de suivi.</li>
+      <li>Aucune donnée vendue ni cédée.</li>
+    </ul>
+  </section>
+
+  <section class="press-block">
+    <h2>Responsable du traitement</h2>
+    <p>
+      {{ editeur.nom }}, {{ editeur.adresse.join(', ') }}. Contact :
+      <a [href]="'mailto:' + editeur.email">{{ editeur.email }}</a>.
+    </p>
+  </section>
+
+  <section class="press-block">
+    <h2>Journaux techniques</h2>
+    <div>
+      <p>
+        Comme tout serveur web, l’hébergeur du site (Vercel) et la base de données du catalogue (Google, via
+        Firebase) enregistrent brièvement des informations techniques à chaque visite : adresse IP, date et
+        heure, page demandée, type de navigateur. Elles servent uniquement au fonctionnement et à la sécurité du
+        site. Base légale : l’intérêt légitime à fournir un site fiable et protégé (article 6.1.f du RGPD).
+      </p>
+      <p>
+        Ces données sont conservées pour une durée limitée fixée par ces prestataires, puis supprimées. Ils
+        peuvent les traiter hors de l’Union européenne, notamment aux États-Unis ; ces transferts sont encadrés
+        par le Data Privacy Framework UE–États-Unis ou par les clauses contractuelles types de la Commission
+        européenne.
+      </p>
+    </div>
+  </section>
+
+  <section class="press-block">
+    <h2>Images de couverture</h2>
+    <p>
+      Une partie des couvertures est affichée directement depuis les sites des éditeurs et des libraires (par
+      exemple Amazon, Fnac ou Les Belles Lettres). Pour les afficher, votre navigateur contacte ces sites, qui
+      reçoivent alors votre adresse IP. Le site leur demande de ne pas transmettre l’adresse de la page
+      consultée. Les polices de caractères, elles, sont hébergées sur le site lui-même.
+    </p>
+  </section>
+
+  <section class="press-block">
+    <h2>Cookies et stockage</h2>
+    <div>
+      <p>
+        Les pages publiques ne déposent aucun cookie et n’écrivent rien dans votre navigateur. Aucun bandeau de
+        consentement n’est donc nécessaire.
+      </p>
+      <p>
+        Seul l’espace d’administration, réservé à {{ editeur.nom }}, utilise le stockage du navigateur pour
+        maintenir la session de connexion. Ce stockage est strictement nécessaire au service demandé et dispensé
+        de consentement (article 82 de la loi Informatique et Libertés).
+      </p>
+    </div>
+  </section>
+
+  <section class="press-block">
+    <h2>Si vous écrivez</h2>
+    <p>
+      Les messages envoyés par e-mail ou par téléphone servent uniquement à vous répondre. Ils ne sont pas
+      réutilisés à d’autres fins et sont conservés le temps nécessaire à l’échange.
+    </p>
+  </section>
+
+  <section class="press-block">
+    <h2>Réseaux sociaux</h2>
+    <p>
+      Les liens vers Facebook et LinkedIn sont de simples liens : aucun module de ces services n’est chargé sur
+      le site. Une fois sur leurs pages, ce sont leurs propres règles qui s’appliquent.
+    </p>
+  </section>
+
+  <section class="press-block">
+    <h2>Vos droits</h2>
+    <div>
+      <p>
+        Vous disposez d’un droit d’accès, de rectification, d’effacement, de limitation et d’opposition sur les
+        données qui vous concernent. Pour l’exercer, écrivez à
+        <a [href]="'mailto:' + editeur.email">{{ editeur.email }}</a>.
+      </p>
+      <p>
+        Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL,
+        3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07, ou sur
+        <a href="https://www.cnil.fr/fr/plaintes">cnil.fr</a>.
+      </p>
+      <p>
+        Voir aussi les <a routerLink="/mentions-legales">mentions légales</a>. Dernière mise à jour :
+        {{ updated }}.
+      </p>
+    </div>
+  </section>
+</div>

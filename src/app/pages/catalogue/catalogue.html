@@ -35,9 +35,9 @@
       }
     </p>
 
-    <div class="tri" role="tablist" aria-label="Classement">
+    <div class="tri" role="group" aria-label="Classement">
       @for (item of tris; track item.id) {
-        <button type="button" [class.is-on]="tri() === item.id" (click)="setTri(item.id)">
+        <button type="button" [class.is-on]="tri() === item.id" [attr.aria-pressed]="tri() === item.id" (click)="setTri(item.id)">
           {{ item.label }}
         </button>
       }
@@ -53,9 +53,9 @@
 
     @if (tri() === 'auteur' || tri() === 'date') {
       <nav class="index" [attr.aria-label]="tri() === 'auteur' ? 'Initiales du nom' : 'Années'">
-        <button type="button" [class.is-on]="selection() === ''" (click)="selection.set('')">Tous</button>
+        <button type="button" [class.is-on]="selection() === ''" [attr.aria-pressed]="selection() === ''" (click)="selection.set('')">Tous</button>
         @for (item of chips(); track item) {
-          <button type="button" [class.is-on]="selection() === item" (click)="selection.set(item)">{{ item }}</button>
+          <button type="button" [class.is-on]="selection() === item" [attr.aria-pressed]="selection() === item" (click)="selection.set(item)">{{ item }}</button>
         }
       </nav>
     }

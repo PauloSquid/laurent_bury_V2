@@ -16,7 +16,8 @@ export function isTri(value: string | null): value is Tri {
 }
 
 export function newLivreId(): string {
-  return `lv${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+  const random = Array.from(crypto.getRandomValues(new Uint8Array(10)), (byte) => (byte % 36).toString(36));
+  return `lv${Date.now().toString(36)}${random.join('')}`;
 }
 
 function asString(value: unknown): string {
@@ -51,14 +52,16 @@ export function withStableIds(rows: unknown[]): Livre[] {
   const seen = new Set<string>();
   return rows.map((row, index) => {
     const draft = livreFromUnknown('', row);
-    let id = hashId(draft);
+    // Un export de Firestore garde l’identifiant du document ; sinon on le déduit du contenu.
+    const stored = asString((row as Record<string, unknown> | null)?.['id']);
+    let id = stored || hashId(draft);
     if (seen.has(id)) id = `${id}-${index}`;
     seen.add(id);
     return { ...draft, id };
   });
 }
 
-export function toFirestoreLivre(livre: Livre): Record<string, string | number | null> {
+export function toFirestoreLivre(livre: Livre): Record<string, string> {
   return {
     auteur: livre.auteur,
     titre: livre.titre,
@@ -68,4 +71,17 @@ export function toFirestoreLivre(livre: Livre): Record<string, string | number |
     info_supplementaires: livre.info_supplementaires,
     image_url: livre.image_url,
   };
+}
+
+/** Document tel que le renvoie l’API REST de Firestore. */
+export interface FirestoreRestDocument {
+  name: string;
+  fields?: Record<string, { stringValue?: string } | undefined>;
+}
+
+export function livreFromRest(document: FirestoreRestDocument): Livre {
+  const fields = document.fields ?? {};
+  const row: Record<string, string> = {};
+  for (const [key, value] of Object.entries(fields)) row[key] = value?.stringValue ?? '';
+  return livreFromUnknown(document.name.split('/').pop() ?? '', row);
 }

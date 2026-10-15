@@ -48,11 +48,16 @@
         Les modifications restent dans ce navigateur. Pour les publier, renseignez Firebase dans
         <code>src/environments/environment.ts</code>, puis importez le catalogue.
       </p>
-    } @else if (livres.source() === 'local') {
-      <p class="banner">Firestore ne contient pas encore d’ouvrages. Le catalogue affiché est celui d’origine.</p>
+    } @else if (livres.remoteEmpty()) {
+      <p class="banner">
+        Firestore ne contient pas encore d’ouvrages. Le catalogue affiché est celui d’origine : importez-le
+        avant de le modifier.
+      </p>
       <button class="btn" type="button" (click)="publish()" [disabled]="saving()">
         Importer les {{ livres.livres().length }} ouvrages
       </button>
+    } @else if (!livres.canEdit() && !livres.remoteWarning()) {
+      <p class="banner" role="status">Connexion à Firestore… Les modifications seront possibles dans un instant.</p>
     }
 
     @if (notice()) {
@@ -65,7 +70,7 @@
         @if (livres.editedLocally() && livres.source() === 'local') {
           <button class="btn ghost" type="button" (click)="resetLocal()">Revenir au catalogue d’origine</button>
         }
-        <button class="btn" type="button" (click)="openCreate()">Ajouter un livre</button>
+        <button class="btn" type="button" (click)="openCreate()" [disabled]="!livres.canEdit()">Ajouter un livre</button>
       </div>
     </div>
 
@@ -106,12 +111,14 @@
                 <td>{{ livre.editeur || '—' }}</td>
                 <td>{{ livre.genre || '—' }}</td>
                 <td class="actions">
-                  <button class="btn ghost" type="button" (click)="openEdit(livre)">Modifier</button>
+                  <button class="btn ghost" type="button" (click)="openEdit(livre)" [disabled]="!livres.canEdit()">Modifier</button>
                   @if (pendingDelete() === livre.id) {
                     <button class="btn danger" type="button" (click)="remove(livre)">Confirmer</button>
                     <button class="btn ghost" type="button" (click)="pendingDelete.set(null)">Annuler</button>
                   } @else {
-                    <button class="btn danger" type="button" (click)="pendingDelete.set(livre.id)">Supprimer</button>
+                    <button class="btn danger" type="button" (click)="pendingDelete.set(livre.id)" [disabled]="!livres.canEdit()">
+                      Supprimer
+                    </button>
                   }
                 </td>
               </tr>

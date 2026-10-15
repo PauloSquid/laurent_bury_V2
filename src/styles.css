@@ -10,9 +10,9 @@
   --pine: #1c2822;
   --gold: #a68456;
   --gold-2: #d8c4a4;
-  --serif: "Fraunces", "Palatino Linotype", Palatino, Georgia, serif;
-  --reading: "Newsreader", Georgia, serif;
-  --sans: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
+  --serif: "Fraunces Variable", "Fraunces", "Palatino Linotype", Palatino, Georgia, serif;
+  --reading: "Newsreader Variable", "Newsreader", Georgia, serif;
+  --sans: "Outfit Variable", "Outfit", "Avenir Next", "Segoe UI", sans-serif;
   --header-h: 4.6rem;
   --wrap: 1120px;
   --shadow: 0 24px 60px rgba(48, 32, 18, 0.12);
@@ -549,6 +549,8 @@ h1, h2, h3 { font-weight: 560; }
 
 .prose section, .press-block { padding: 1.5rem 0; border-top: 1px solid var(--line); }
 
+.legal > section:first-child { border-top: 0; padding-top: 0; }
+
 .prose h2 { margin: 0 0 0.8rem; font-size: 2rem; }
 
 .prose p, .prose li { font-family: var(--reading); font-size: 1.16rem; line-height: 1.5; }
@@ -613,12 +615,15 @@ h1, h2, h3 { font-weight: 560; }
 .site-footer {
   margin-top: 3rem;
   border-top: 1px solid var(--line);
-  padding: 1.4rem 0 2rem;
+  /* Laisse la place au bouton « Haut de page », fixé en bas à droite. */
+  padding: 1.4rem 0 5.5rem;
   color: var(--ink-soft);
   font-size: 0.92rem;
 }
 
 .footer-inner p { margin: 0; }
+
+.footer-legal { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; }
 
 .status { color: var(--ink-soft); font-family: var(--reading); font-size: 1.3rem; }
 

@@ -1,16 +1,21 @@
-name: Deploy
+name: CI
+
+# Le site est construit et publié par Vercel à chaque push.
+# Ce workflow teste le projet et déploie les règles Firestore.
 
 on:
   push:
     branches: [main]
+  pull_request:
+  workflow_dispatch:
 
 concurrency:
-  group: firebase-deploy
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: Build and deploy
+  test:
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,13 +27,37 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Setup Java (émulateur Firestore)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
       - name: Install
         run: npm ci
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Firestore rules tests
+        run: npm run test:rules
 
       - name: Build
         run: npm run build
 
-      - name: Deploy Hosting and Firestore rules
+      - name: Build tests
+        run: npm run test:build
+
+  rules:
+    name: Deploy Firestore rules
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy
         env:
           SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/gcp-key.json
@@ -38,5 +67,5 @@ jobs:
             exit 1
           fi
           printf '%s' "$SERVICE_ACCOUNT" > "$GOOGLE_APPLICATION_CREDENTIALS"
-          npx --yes firebase-tools@15.32.1 deploy --only hosting,firestore:rules --project laurentburytraducteur --non-interactive
+          npx --yes firebase-tools@15.32.1 deploy --only firestore:rules --project laurentburytraducteur --non-interactive
           rm -f "$GOOGLE_APPLICATION_CREDENTIALS"

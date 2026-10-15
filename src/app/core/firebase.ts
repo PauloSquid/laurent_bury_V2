@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { environment, isFirebaseConfigured } from '../../environments/environment';
 
 export async function firebaseApp(): Promise<import('firebase/app').FirebaseApp | null> {
@@ -5,6 +6,17 @@ export async function firebaseApp(): Promise<import('firebase/app').FirebaseApp 
   const { getApp, getApps, initializeApp } = await import('firebase/app');
   if (getApps().length) return getApp();
   return initializeApp(environment.firebase);
+}
+
+/** Point d’accès unique à Firebase, remplaçable dans les tests. */
+@Injectable({ providedIn: 'root' })
+export class FirebaseClient {
+  readonly enabled = isFirebaseConfigured();
+  readonly projectId = environment.firebase.projectId;
+
+  app(): Promise<import('firebase/app').FirebaseApp | null> {
+    return firebaseApp();
+  }
 }
 
 export function errorCode(error: unknown): string {

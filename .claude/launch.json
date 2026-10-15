@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve@14.2.4", "-l", "5050", "dist/laurent-bury/browser"],
+      "port": 5050
+    }
+  ]
+}

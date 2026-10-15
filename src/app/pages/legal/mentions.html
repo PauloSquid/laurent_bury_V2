@@ -1,0 +1,91 @@
+<header class="page-head wrap">
+  <div>
+    <p class="kicker">Informations légales</p>
+    <h1>Mentions légales</h1>
+  </div>
+  <p class="lede">
+    Informations prévues par l’article 6 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans
+    l’économie numérique.
+  </p>
+</header>
+
+<div class="wrap prose legal">
+  <section class="press-block">
+    <h2>Éditeur</h2>
+    <div>
+      <p>
+        {{ editeur.nom }}, {{ editeur.activite.toLowerCase() }}<br />
+        @for (ligne of editeur.adresse; track ligne) {
+          {{ ligne }}<br />
+        }
+      </p>
+      <p>
+        Téléphone : <a [href]="editeur.telephoneLien">{{ editeur.telephone }}</a><br />
+        E-mail : <a [href]="'mailto:' + editeur.email">{{ editeur.email }}</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="press-block">
+    <h2>Publication</h2>
+    <p>Directeur de la publication : {{ editeur.nom }}.</p>
+  </section>
+
+  <section class="press-block">
+    <h2>Hébergement</h2>
+    <div>
+      <p>
+        {{ hebergeur.nom }}<br />
+        @for (ligne of hebergeur.adresse; track ligne) {
+          {{ ligne }}<br />
+        }
+        Téléphone : {{ hebergeur.telephone }}
+      </p>
+      <p>
+        Le catalogue des ouvrages est stocké dans la base de données Cloud Firestore, fournie par
+        {{ baseDonnees.nom }}, {{ baseDonnees.adresse }}.
+      </p>
+    </div>
+  </section>
+
+  <section class="press-block">
+    <h2>Propriété intellectuelle</h2>
+    <div>
+      <p>
+        Les textes, la présentation et le portrait publiés sur ce site appartiennent à {{ editeur.nom }}. Toute
+        reproduction, même partielle, sans autorisation écrite préalable est interdite, sauf dans les limites
+        prévues par l’article L. 122-5 du Code de la propriété intellectuelle (courte citation, notamment).
+      </p>
+      <p>
+        Les couvertures des ouvrages restent la propriété de leurs éditeurs, illustrateurs et ayants droit. Elles
+        sont reproduites à seule fin d’identifier les traductions présentées. Tout ayant droit qui souhaite le
+        retrait d’une image peut écrire à <a [href]="'mailto:' + editeur.email">{{ editeur.email }}</a> ; elle
+        sera retirée dans les meilleurs délais.
+      </p>
+      <p>Les polices de caractères Fraunces, Newsreader et Outfit sont diffusées sous licence SIL Open Font.</p>
+    </div>
+  </section>
+
+  <section class="press-block">
+    <h2>Liens externes</h2>
+    <p>
+      Le site renvoie vers des sites tiers (éditeurs, revues, réseaux sociaux). {{ editeur.nom }} n’exerce aucun
+      contrôle sur leur contenu et ne peut en être tenu responsable.
+    </p>
+  </section>
+
+  <section class="press-block">
+    <h2>Données personnelles</h2>
+    <p>
+      Le site ne dépose aucun cookie de suivi et ne collecte aucune donnée à des fins commerciales. Le détail
+      figure dans la <a routerLink="/confidentialite">politique de confidentialité</a>.
+    </p>
+  </section>
+
+  <section class="press-block">
+    <h2>Droit applicable</h2>
+    <p>
+      Les présentes mentions sont régies par le droit français. Dernière mise à jour : {{ updated }}.
+    </p>
+  </section>
+</div>
