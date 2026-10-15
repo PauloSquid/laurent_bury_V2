@@ -6,10 +6,11 @@ import { surnameInitial } from '../../core/dates';
 import { LivresService } from '../../core/livres.service';
 import { isTri, Tri } from '../../core/models';
 import { Cover } from '../../shared/cover';
+import { UpcomingPipe } from '../../shared/upcoming.pipe';
 
 @Component({
   selector: 'app-catalogue',
-  imports: [Cover],
+  imports: [Cover, UpcomingPipe],
   templateUrl: './catalogue.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

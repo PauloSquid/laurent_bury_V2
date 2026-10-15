@@ -104,7 +104,7 @@
           <tbody>
             @for (livre of rows(); track livre.id) {
               <tr>
-                <td class="cover-cell"><app-cover [src]="livre.image_url" [alt]="'Couverture de ' + livre.titre" /></td>
+                <td class="cover-cell"><app-cover [livre]="livre" /></td>
                 <td>{{ livre.titre }}</td>
                 <td>{{ livre.auteur || '—' }}</td>
                 <td>{{ livre.date || '—' }}</td>

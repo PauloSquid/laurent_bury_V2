@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { BASE_DONNEES, EDITEUR, HEBERGEUR } from '../../core/site';
 import { ConfidentialitePage } from './confidentialite';
 import { MentionsPage } from './mentions';
+import { CvPage } from '../cv/cv';
 
 function text(component: typeof MentionsPage | typeof ConfidentialitePage): string {
   const fixture = TestBed.createComponent(component);
@@ -33,6 +34,17 @@ describe('Pages légales', () => {
     for (const point of ['Responsable du traitement', 'Vercel', 'Base légale', 'Cookies', 'Vos droits', 'CNIL', 'États-Unis']) {
       expect(page).toContain(point);
     }
+    expect(page).toContain(EDITEUR.email);
+  });
+});
+
+describe('Page CV', () => {
+  it('ne publie ni date de naissance ni nationalité', () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(CvPage);
+    fixture.detectChanges();
+    const page = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(page).not.toMatch(/Né le|Nationalité|1967/);
     expect(page).toContain(EDITEUR.email);
   });
 });

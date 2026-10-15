@@ -84,12 +84,17 @@
         </h2>
         @for (livre of group.livres; track livre.id) {
           <article class="book">
-            <app-cover [src]="livre.image_url" [alt]="'Couverture de ' + livre.titre" />
+            <app-cover [livre]="livre" />
             <div>
               @if (tri() !== 'auteur' && livre.auteur) {
                 <p class="by">{{ livre.auteur }}</p>
               }
-              <h3>{{ livre.titre }}</h3>
+              <h3>
+                {{ livre.titre }}
+                @if (livre.date | upcoming) {
+                  <span class="soon">À paraître</span>
+                }
+              </h3>
               <p class="meta">
                 @if (livre.date) {
                   <span>{{ livre.date }}</span>

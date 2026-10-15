@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { compareFr, fold, lastName, monthOf, surnameInitial, surnameKey, yearOf } from './dates';
+import { compareFr, fold, isUpcoming, lastName, monthOf, surnameInitial, surnameKey, yearOf } from './dates';
 
 describe('fold', () => {
   it('retire accents et majuscules', () => {
@@ -89,4 +89,19 @@ describe('compareFr', () => {
     expect(compareFr('éditeur', 'Editeur')).toBe(0);
     expect(compareFr('Zola', 'émile')).toBeGreaterThan(0);
   });
+});
+
+describe('isUpcoming', () => {
+  const today = new Date(2026, 9, 15); // 15 octobre 2026
+
+  it.each(['mars 2027', '2027', 'novembre 2026', 'décembre 2026', '12/2026'])('« %s » est à paraître', (date) => {
+    expect(isUpcoming(date, today)).toBe(true);
+  });
+
+  it.each(['octobre 2026', 'septembre 2026', '2026', 'mars 2025', '', 'à paraître'])(
+    '« %s » n’est pas à paraître',
+    (date) => {
+      expect(isUpcoming(date, today)).toBe(false);
+    },
+  );
 });

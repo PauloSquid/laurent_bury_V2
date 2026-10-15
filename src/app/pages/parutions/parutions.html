@@ -16,15 +16,15 @@
     <p class="status">Aucune parution récente trouvée.</p>
   } @else {
     @for (year of years(); track year.key) {
-      <section class="year-block">
+      <section class="year-block" [class.is-upcoming]="year.key === upcomingKey">
         <header>
           <h2>{{ year.key }}</h2>
           <p>{{ year.livres.length }} {{ year.livres.length > 1 ? 'ouvrages' : 'ouvrage' }}</p>
         </header>
         <div class="cover-grid">
           @for (livre of year.livres; track livre.id) {
-            <article class="tome">
-              <app-cover [src]="livre.image_url" [alt]="'Couverture de ' + livre.titre" />
+            <article class="tome" [id]="'livre-' + livre.id" [class.is-target]="livre.id === target()">
+              <app-cover [livre]="livre" />
               @if (livre.auteur) {
                 <p class="by">{{ livre.auteur }}</p>
               }

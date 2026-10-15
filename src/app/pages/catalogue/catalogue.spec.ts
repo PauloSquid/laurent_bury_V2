@@ -71,6 +71,14 @@ describe('Page Traductions', () => {
     expect(headings(root)).toEqual(['Thomas PIKETTY']);
   });
 
+  it('signale les titres à paraître', async () => {
+    fake.livres.set([...LIVRES, livre({ titre: 'Le Prochain', date: `mars ${new Date().getFullYear() + 1}` })]);
+    const root = await open();
+    const badges = [...root.querySelectorAll('.soon')];
+    expect(badges).toHaveLength(1);
+    expect(badges[0].closest('h3')?.textContent).toContain('Le Prochain');
+  });
+
   it('affiche le chargement puis les erreurs', async () => {
     fake.loading.set(true);
     fake.error.set('Le catalogue n’a pas pu être chargé.');

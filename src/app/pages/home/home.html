@@ -31,26 +31,41 @@
       <span>maisons d’édition</span>
     </p>
     <p class="stat">
-      <b>{{ loading() ? '—' : stats().genres }}</b>
-      <span>genres</span>
+      <b>{{ loading() || !stats().depuis ? '—' : stats().depuis }}</b>
+      <span>première traduction</span>
     </p>
   </div>
 </section>
 
 <section class="wrap shelf-section">
   <div class="section-head">
-    <h2>Dernières parutions</h2>
-    <a routerLink="/dernieres-parutions">Tout voir</a>
+    <h2 id="titre-etagere">Dernières parutions</h2>
+    <div class="shelf-nav">
+      @if (!atStart() || !atEnd()) {
+        <button type="button" class="shelf-arrow" (click)="scrollShelf(-1)" [disabled]="atStart()" aria-label="Titres précédents">
+          ←
+        </button>
+        <button type="button" class="shelf-arrow" (click)="scrollShelf(1)" [disabled]="atEnd()" aria-label="Titres suivants">
+          →
+        </button>
+      }
+      <a routerLink="/dernieres-parutions">Tout voir</a>
+    </div>
   </div>
   @if (shelf().length) {
-    <div class="shelf">
-      @for (livre of shelf(); track livre.id) {
-        <a class="tome" routerLink="/dernieres-parutions">
-          <app-cover [src]="livre.image_url" [alt]="'Couverture de ' + livre.titre" />
-          <h3>{{ livre.titre }}</h3>
-          <p>{{ livre.auteur }}</p>
-        </a>
-      }
+    <div class="shelf-frame" [class.fade-start]="!atStart()" [class.fade-end]="!atEnd()">
+      <div class="shelf" #shelfList (scroll)="updateEdges()" role="list" aria-labelledby="titre-etagere">
+        @for (livre of shelf(); track livre.id) {
+          <a class="tome" role="listitem" routerLink="/dernieres-parutions" [fragment]="'livre-' + livre.id">
+            <app-cover [livre]="livre" />
+            @if (livre.date | upcoming) {
+              <span class="soon">À paraître</span>
+            }
+            <h3>{{ livre.titre }}</h3>
+            <p>{{ livre.auteur }}</p>
+          </a>
+        }
+      </div>
     </div>
   }
 </section>

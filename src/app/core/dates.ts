@@ -41,6 +41,16 @@ export function monthOf(date: string): number | null {
   return month >= 1 && month <= 12 ? month : null;
 }
 
+/** Vrai si la date annoncée est postérieure au mois en cours (« mars 2027 », « 2027 »). */
+export function isUpcoming(date: string, today: Date = new Date()): boolean {
+  const year = yearOf(date);
+  if (year === null) return false;
+  const currentYear = today.getFullYear();
+  if (year !== currentYear) return year > currentYear;
+  const month = monthOf(date.replace(/\b(19|20)\d{2}\b/, ' '));
+  return month !== null && month > today.getMonth() + 1;
+}
+
 export function lastName(value: string): string {
   const parts = value.trim().split(/\s+/);
   return parts.length ? parts[parts.length - 1].toLowerCase() : '';

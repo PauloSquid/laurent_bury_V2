@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { livre } from '../../testing/livres';
-import { groupCatalogue, parutionsByYear, recentLivres, slugify, uniqueValues } from './catalogue';
+import { UPCOMING_KEY, groupCatalogue, parutionsByYear, recentLivres, slugify, uniqueValues } from './catalogue';
 
 const keys = (groups: { key: string }[]) => groups.map((group) => group.key);
 const titres = (groups: { livres: { titre: string }[] }[]) =>
@@ -146,11 +146,11 @@ describe('recherche', () => {
 describe('parutions récentes', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-10-15T12:00:00Z'));
+    vi.setSystemTime(new Date(2026, 9, 15, 12));
   });
   afterEach(() => vi.useRealTimers());
 
-  it('garde les quatre dernières années, du plus récent au plus ancien', () => {
+  it('met les titres annoncés en tête, puis les quatre dernières années', () => {
     const groups = parutionsByYear([
       livre({ date: 'mars 2027' }),
       livre({ date: '2026' }),
@@ -158,7 +158,23 @@ describe('parutions récentes', () => {
       livre({ date: '2021' }),
       livre({ date: '' }),
     ]);
-    expect(keys(groups)).toEqual(['2027', '2026', '2022']);
+    expect(keys(groups)).toEqual([UPCOMING_KEY, '2026', '2022']);
+  });
+
+  it('range les titres annoncés du plus proche au plus lointain', () => {
+    const groups = parutionsByYear([
+      livre({ titre: 'Lointain', date: 'mai 2028' }),
+      livre({ titre: 'Paru', date: 'septembre 2026' }),
+      livre({ titre: 'Proche', date: 'novembre 2026' }),
+      livre({ titre: 'Ensuite', date: 'février 2027' }),
+    ]);
+    expect(groups[0].livres.map((item) => item.titre)).toEqual(['Proche', 'Ensuite', 'Lointain']);
+    expect(groups[0].anchor).toBe('a-paraitre');
+    expect(keys(groups)).toEqual([UPCOMING_KEY, '2026']);
+  });
+
+  it('n’ajoute pas de groupe vide quand rien n’est annoncé', () => {
+    expect(keys(parutionsByYear([livre({ date: '2025' })]))).toEqual(['2025']);
   });
 
   it('limite l’étagère de l’accueil', () => {

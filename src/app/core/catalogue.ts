@@ -1,4 +1,4 @@
-import { compareFr, fold, monthOf, surnameKey, yearOf } from './dates';
+import { compareFr, fold, isUpcoming, monthOf, surnameKey, yearOf } from './dates';
 import { Livre, Tri } from './models';
 
 export interface CatalogueGroup {
@@ -150,16 +150,24 @@ export function groupCatalogue(livres: Livre[], tri: Tri, rawQuery: string): Cat
   );
 }
 
-export function parutionsByYear(livres: Livre[]): CatalogueGroup[] {
-  const minimum = new Date().getFullYear() - 4;
+export const UPCOMING_KEY = 'À paraître';
+
+/** Les titres annoncés d’abord (du plus proche au plus lointain), puis les quatre dernières années. */
+export function parutionsByYear(livres: Livre[], today: Date = new Date()): CatalogueGroup[] {
+  const minimum = today.getFullYear() - 4;
   const groups = new Map<string, Livre[]>();
+  const upcoming: Livre[] = [];
   for (const livre of livres) {
     if (!livre.titre.trim()) continue;
+    if (isUpcoming(livre.date, today)) {
+      upcoming.push(livre);
+      continue;
+    }
     const year = yearOf(livre.date);
     if (year === null || year < minimum) continue;
     pushGroup(groups, String(year), livre);
   }
-  return sortKeys(groups, (a, b) => Number(b) - Number(a)).map(([key, items]) =>
+  const byYear = sortKeys(groups, (a, b) => Number(b) - Number(a)).map(([key, items]) =>
     toGroup(
       key,
       items.sort((a, b) => {
@@ -169,10 +177,19 @@ export function parutionsByYear(livres: Livre[]): CatalogueGroup[] {
       }),
     ),
   );
+  if (!upcoming.length) return byYear;
+  upcoming.sort((a, b) => {
+    const byYear = compareYearDesc(b.date, a.date);
+    if (byYear) return byYear;
+    const byMonth = compareMonthDesc(b.date, a.date);
+    if (byMonth) return byMonth;
+    return compareFr(a.titre, b.titre);
+  });
+  return [toGroup(UPCOMING_KEY, upcoming), ...byYear];
 }
 
-export function recentLivres(livres: Livre[], limit = 8): Livre[] {
-  return parutionsByYear(livres)
+export function recentLivres(livres: Livre[], limit = 8, today: Date = new Date()): Livre[] {
+  return parutionsByYear(livres, today)
     .flatMap((group) => group.livres)
     .slice(0, limit);
 }
